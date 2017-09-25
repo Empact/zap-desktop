@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { NavLink } from 'react-router-dom'
 import ReactSVG from 'react-svg'
 import { MdAccountBalanceWallet } from 'react-icons/lib/md'
-import { FaClockO, FaDollar } from 'react-icons/lib/fa'
+import { FaClockO, FaDollar, FaGlobe } from 'react-icons/lib/fa'
 import CryptoIcon from '../../../../components/CryptoIcon'
 import CurrencyIcon from '../../../../components/CurrencyIcon'
 import { btc, usd } from '../../../../utils'
@@ -68,6 +68,12 @@ const Nav = ({ ticker, balance, setCurrency, formClicked, currentTicker }) => (
         <NavLink exact to='/wallet' activeClassName={styles.active} className={styles.link}>
           <MdAccountBalanceWallet />
           <span>Wallet</span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink exact to='/network' activeClassName={styles.active} className={styles.link}>
+          <FaGlobe />
+          <span>Network</span>
         </NavLink>
       </li>
     </ul>
