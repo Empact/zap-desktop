@@ -10,7 +10,6 @@ import * as networkController from './networkController'
 // TODO - GetChanInfo
 // TODO - GetTransactions
 // TODO - GetNodeInfo
-// TODO - DescribeGraph
 // TODO - GetNetworkInfo
 // TODO - QueryRoutes
 // TODO - DecodePayReq
@@ -27,6 +26,17 @@ export default function (lnd, event, msg, data) {
           event.sender.send('receiveCryptocurrency', infoData.chains[0])
         })
         .catch(error => console.log('info error: ', error))
+      break
+    case 'describeNetwork':
+      networkController.describeGraph(lnd)
+        .then(networkData => event.sender.send('receiveDescribeNetwork', networkData))
+        .catch(error => console.log('describeGraph error: ', error))
+      break
+    case 'queryRoutes':
+    // Data looks like { pubkey: String, amount: Number }
+      networkController.queryRoutes(lnd, data)
+        .then(routes => event.sender.send('receiveQueryRoutes', routes))
+        .catch(error => console.log('queryRoutes error: ', error))
       break
     case 'newaddress':
     // Data looks like { address: '' }

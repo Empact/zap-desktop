@@ -13,6 +13,7 @@ import modal from './modal'
 import address from './address'
 import transaction from './transaction'
 import activity from './activity'
+import network from './network'
 
 const rootReducer = combineReducers({
   router,
@@ -27,7 +28,8 @@ const rootReducer = combineReducers({
   modal,
   address,
   transaction,
-  activity
+  activity,
+  network
 })
 
 export default rootReducer

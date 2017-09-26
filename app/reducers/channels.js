@@ -193,6 +193,11 @@ channelsSelectors.allChannels = createSelector(
   )
 )
 
+channelsSelectors.channelIds = createSelector(
+  channelsSelector,
+  channels => channels.map(channel => channel.chan_id)
+)
+
 export { channelsSelectors }
 
 // ------------------------------------
