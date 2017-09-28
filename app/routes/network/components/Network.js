@@ -13,6 +13,24 @@ class Network extends Component {
     fetchDescribeNetwork()
   }
 
+  componentDidUpdate() {
+    const { currentRouteHopChanIds } = this.props
+
+    const paths = currentRouteHopChanIds.map(chanId => {
+      console.log('chanId: ', chanId)
+      const line = this[`${chanId}`]
+      console.log('line: ', line)
+      console.log('props: ', line.props)
+      console.log('x1: ', line.props.x1)
+      console.log('x1: ', line.props['x1'])
+      // return (
+      //   <path d={`M${line.props['x1']} ${line.props['y1']} L${line.props['x2']} ${line.props['y2']}`} />
+      // )      
+    })
+
+    console.log('paths: ', paths)
+  }
+
   render() {
     const {
       peers: { peers },
@@ -27,6 +45,7 @@ class Network extends Component {
     if (!nodes.length || !edges.length) { return <span></span> }
     if (networkLoading) return <LoadingBolt />
     
+    const paths = []
     return (
       <div className={styles.container}>
         <section className={styles.network}>
@@ -46,6 +65,7 @@ class Network extends Component {
             opacityFactor={1}
             highlightDependencies
           >
+            <path d="M534.7054286266647, 460.3260926684966" fill="red" stroke="blue" />
             {
               nodes.map(node => {
                 return (
@@ -70,20 +90,14 @@ class Network extends Component {
                     link={{ source: edge.node1_pub, target: edge.node2_pub }}
                     stroke={currentRouteHopChanIds.indexOf(edge.channel_id) > -1 ? 'green' : 'silver'}
                     strokeWidth='5'
-                  >
-                  </ForceGraphLink>
+                    ref={line => this[edge.channel_id] = line}
+                  />
                 )
               })
             }
           </InteractiveForceGraph>
         </section>
         <section className={styles.data}>
-          {
-            networkLoading ?
-              <h1>loading...</h1>
-              :
-              null
-          }
           <header>
             {
               selectedNode.pubkey.length && !networkLoading ?
