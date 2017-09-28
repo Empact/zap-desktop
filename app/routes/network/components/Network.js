@@ -6,14 +6,16 @@ import styles from './Network.scss'
 
 class Network extends Component {
   componentWillMount() {
-    const { fetchChannels, fetchDescribeNetwork } = this.props
+    const { fetchPeers, fetchChannels, fetchDescribeNetwork } = this.props
 
+    fetchPeers()
     fetchChannels()
     fetchDescribeNetwork()
   }
 
   render() {
     const {
+      peers: { peers },
       info: { data: { identity_pubkey } }, 
       network: { nodes, edges, selectedNode, networkLoading },
       setCurrentRoute,
@@ -22,8 +24,6 @@ class Network extends Component {
       channelIds
     } = this.props
 
-    console.log('networkLoading: ', networkLoading)
-    
     if (!nodes.length || !edges.length) { return <span></span> }
     if (networkLoading) return <LoadingBolt />
     
@@ -36,7 +36,7 @@ class Network extends Component {
                 height: 1000,
                 width: 1000,
                 strength: { 
-                  charge: -1000
+                  charge: -750
                 },
                 animate: true 
               }
@@ -70,7 +70,8 @@ class Network extends Component {
                     link={{ source: edge.node1_pub, target: edge.node2_pub }}
                     stroke={currentRouteHopChanIds.indexOf(edge.channel_id) > -1 ? 'green' : 'silver'}
                     strokeWidth='5'
-                  />
+                  >
+                  </ForceGraphLink>
                 )
               })
             }
