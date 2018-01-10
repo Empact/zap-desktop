@@ -82,7 +82,10 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     frame: false,
-    icon: icon
+    icon: icon,
+    webPreferences: {
+      nodeIntegration: false
+    }
   })
 
   mainWindow.maximize()
