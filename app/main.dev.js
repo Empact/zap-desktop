@@ -13,6 +13,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import fs from 'fs'
+import log from 'electron-log'
 import { spawn } from 'child_process'
 import { lookup } from 'ps-node'
 import os from 'os'
@@ -51,7 +52,7 @@ const installExtensions = async () => {
 
   return Promise
     .all(extensions.map(name => installer.default(installer[name], forceDownload)))
-    .catch(console.log)
+    .catch(log.error)
 }
 
 // Send the front end event letting them know the gRPC connection has started
@@ -75,7 +76,7 @@ const sendLndSyncing = () => {
       clearInterval(sendLndSyncingInterval)
 
       if (mainWindow) {
-        console.log('SENDING SYNCING')
+        log.debug('SENDING SYNCING')
         startedSync = true
         mainWindow.webContents.send('lndSyncing')
       }
@@ -118,7 +119,7 @@ const sendLndSynced = () => {
       clearInterval(sendLndSyncedInterval)
 
       if (mainWindow) {
-        console.log('SENDING SYNCED')
+        log.debug('SENDING SYNCED')
         mainWindow.webContents.send('lndSynced')
       }
     }
@@ -145,15 +146,15 @@ const startLnd = () => {
       '--noencryptwallet'
     ]
   )
-    .on('error', error => console.log(`lnd error: ${error}`))
-    .on('close', code => console.log(`lnd shutting down ${code}`))
+    .on('error', error => log.error(`lnd error: ${error}`))
+    .on('close', code => log.info(`lnd shutting down ${code}`))
 
   // Listen for when neutrino prints out data
   neutrino.stdout.on('data', (data) => {
     // Data stored in variable line, log line to the console
     const line = data.toString('utf8')
 
-    if (process.env.NODE_ENV === 'development') { console.log(line) }
+    if (process.env.NODE_ENV === 'development') { log.debug(line) }
 
     // If the gRPC proxy has started we can start ours
     if (line.includes('gRPC proxy started')) {
@@ -161,7 +162,7 @@ const startLnd = () => {
         if (fs.existsSync(certPath)) {
           clearInterval(certInterval)
 
-          console.log('CERT EXISTS, STARTING GRPC')
+          log.debug('CERT EXISTS, STARTING GRPC')
           startGrpc()
         }
       }, 1000)
@@ -176,7 +177,7 @@ const startLnd = () => {
     // When LND is all caught up to the blockchain
     if (line.includes('Chain backend is fully synced')) {
       // Log that LND is caught up to the current block height
-      console.log('NEUTRINO IS SYNCED')
+      log.debug('NEUTRINO IS SYNCED')
 
       // Let the front end know we have stopped syncing LND
       sendLndSynced()
@@ -203,7 +204,7 @@ app.on('ready', async () => {
   }
 
   const icon = path.join(__dirname, '..', 'resources', 'icon.icns')
-  console.log('icon: ', icon)
+  log.debug('icon: ', icon)
   mainWindow = new BrowserWindow({
     show: false,
     frame: true,
@@ -266,7 +267,7 @@ app.on('ready', async () => {
       startLnd()
     } else {
       // An LND process was found, no need to start our own
-      console.log('LND ALREADY RUNNING')
+      log.info('LND ALREADY RUNNING')
       startGrpc()
     }
   })

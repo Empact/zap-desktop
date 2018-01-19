@@ -199,8 +199,6 @@ export const closeChannel = ({ channel_point, chan_id, force }) => (dispatch) =>
   dispatch(closingChannel())
   dispatch(addClosingChanId(chan_id))
 
-  console.log('force: ', force)
-
   const [funding_txid, output_index] = channel_point.split(':')
   ipcRenderer.send(
     'lnd',

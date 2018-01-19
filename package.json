@@ -209,6 +209,7 @@
     "d3-zoom": "^1.7.1",
     "devtron": "^1.4.0",
     "electron-debug": "^1.2.0",
+    "electron-log": "^2.2.14",
     "font-awesome": "^4.7.0",
     "history": "^4.6.3",
     "lodash": "^4.17.4",

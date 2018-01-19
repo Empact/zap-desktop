@@ -1,10 +1,12 @@
+import log from 'electron-log'
+
 export default function subscribeToTransactions(mainWindow, lnd, meta) {
   const call = lnd.subscribeTransactions({}, meta)
   call.on('data', (transaction) => {
-    console.log('TRANSACTION: ', transaction)
+    log.info('TRANSACTION: ', transaction)
     mainWindow.send('newTransaction', { transaction })
   })
-  call.on('end', () => console.log('end'))
-  call.on('error', error => console.log('error: ', error))
-  call.on('status', status => console.log('TRANSACTION STATUS: ', status))
+  call.on('end', () => log.debug('end'))
+  call.on('error', error => log.error('error: ', error))
+  call.on('status', status => log.info('TRANSACTION STATUS: ', status))
 }

@@ -11,6 +11,7 @@ import path from 'path'
 import fs from 'fs'
 import webpack from 'webpack'
 import chalk from 'chalk'
+import log from 'electron-log'
 import merge from 'webpack-merge'
 import { spawn, execSync } from 'child_process'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
@@ -28,7 +29,7 @@ const manifest = path.resolve(dll, 'renderer.json')
  * Warn if the DLL is not built
  */
 if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(chalk.black.bgYellow.bold('The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'))
+  log.error(chalk.black.bgYellow.bold('The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'))
   execSync('npm run build-dll')
 }
 
@@ -264,14 +265,14 @@ export default merge.smart(baseConfig, {
     },
     setup() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...')
+        log.info('Starting Main Process...')
         spawn(
           'npm',
           ['run', 'start-main-dev'],
           { shell: true, env: process.env, stdio: 'inherit' }
         )
           .on('close', code => process.exit(code))
-          .on('error', spawnError => console.error(spawnError))
+          .on('error', spawnError => log.error(spawnError))
       }
     }
   }

@@ -1,5 +1,6 @@
 /* eslint no-console: 0 */ // --> OFF
 // import grpc from 'grpc'
+import log from 'electron-log'
 
 import * as invoicesController from './invoicesController'
 import * as channelController from './channelController'
@@ -32,13 +33,13 @@ export default function (lnd, meta, event, msg, data) {
     case 'describeNetwork':
       networkController.describeGraph(lnd, meta)
         .then(networkData => event.sender.send('receiveDescribeNetwork', networkData))
-        .catch(error => console.log('describeGraph error: ', error))
+        .catch(error => log.error('describeGraph error: ', error))
       break
     case 'queryRoutes':
     // Data looks like { pubkey: String, amount: Number }
       networkController.queryRoutes(lnd, meta, data)
         .then(routes => event.sender.send('receiveQueryRoutes', routes))
-        .catch(error => console.log('queryRoutes error: ', error))
+        .catch(error => log.error('queryRoutes error: ', error))
       break
     case 'getInvoiceAndQueryRoutes':
     // Data looks like { pubkey: String, amount: Number }
@@ -52,25 +53,25 @@ export default function (lnd, meta, event, msg, data) {
         .then(routes =>
           event.sender.send('receiveInvoiceAndQueryRoutes', routes)
         )
-        .catch(error => console.log('getInvoiceAndQueryRoutes invoice error: ', error))
+        .catch(error => log.error('getInvoiceAndQueryRoutes invoice error: ', error))
       break
     case 'newaddress':
       // Data looks like { address: '' }
       walletController.newAddress(lnd, meta, data.type)
         .then(({ address }) => event.sender.send('receiveAddress', address))
-        .catch(error => console.log('newaddress error: ', error))
+        .catch(error => log.error('newaddress error: ', error))
       break
     case 'setAlias':
     // Data looks like { new_alias: '' }
       walletController.setAlias(lnd, meta, data)
         .then(() => event.sender.send('aliasSet'))
-        .catch(error => console.log('setAlias error: ', error))
+        .catch(error => log.error('setAlias error: ', error))
       break
     case 'peers':
     // Data looks like { peers: [] }
       peersController.listPeers(lnd, meta)
         .then(peersData => event.sender.send('receivePeers', peersData))
-        .catch(error => console.log('peers error: ', error))
+        .catch(error => log.error('peers error: ', error))
       break
     case 'channels':
     // Data looks like
@@ -78,31 +79,31 @@ export default function (lnd, meta, event, msg, data) {
       Promise.all([channelController.listChannels, channelController.pendingChannels].map(func => func(lnd, meta)))
         .then(channelsData =>
           event.sender.send('receiveChannels', { channels: channelsData[0].channels, pendingChannels: channelsData[1] }))
-        .catch(error => console.log('channels error: ', error))
+        .catch(error => log.error('channels error: ', error))
       break
     case 'transactions':
     // Data looks like { transactions: [] }
       walletController.getTransactions(lnd, meta)
         .then(transactionsData => event.sender.send('receiveTransactions', transactionsData))
-        .catch(error => console.log('transactions error: ', error))
+        .catch(error => log.error('transactions error: ', error))
       break
     case 'payments':
     // Data looks like { payments: [] }
       paymentsController.listPayments(lnd, meta)
         .then(paymentsData => event.sender.send('receivePayments', paymentsData))
-        .catch(error => console.log('payments error: ', error))
+        .catch(error => log.error('payments error: ', error))
       break
     case 'invoices':
     // Data looks like { invoices: [] }
       invoicesController.listInvoices(lnd, meta)
         .then(invoicesData => event.sender.send('receiveInvoices', invoicesData))
-        .catch(error => console.log('invoices error: ', error))
+        .catch(error => log.error('invoices error: ', error))
       break
     case 'invoice':
     // Data looks like { invoices: [] }
       invoicesController.getInvoice(lnd, meta, { pay_req: data.payreq })
         .then(invoiceData => event.sender.send('receiveInvoice', invoiceData))
-        .catch(error => console.log('invoice error: ', error))
+        .catch(error => log.error('invoice error: ', error))
       break
     case 'balance':
     // Balance looks like [ { balance: '129477456' }, { balance: '243914' } ]
@@ -111,7 +112,7 @@ export default function (lnd, meta, event, msg, data) {
           event.sender.send('receiveBalance', { walletBalance: balance[0].total_balance, channelBalance: balance[1].balance })
           return balance
         })
-        .catch(error => console.log('balance error: ', error))
+        .catch(error => log.error('balance error: ', error))
       break
     case 'createInvoice':
     // Invoice looks like { r_hash: Buffer, payment_request: '' }
@@ -128,7 +129,7 @@ export default function (lnd, meta, event, msg, data) {
             })
           ))
         .catch((error) => {
-          console.log('addInvoice error: ', error)
+          log.error('addInvoice error: ', error)
           event.sender.send('invoiceFailed', { error: error.toString() })
         })
       break
@@ -138,12 +139,12 @@ export default function (lnd, meta, event, msg, data) {
       paymentsController.sendPaymentSync(lnd, meta, data)
         .then((payment) => {
           const { payment_route } = payment
-          console.log('payinvoice success: ', payment_route)
+          log.info('payinvoice success: ', payment_route)
           event.sender.send('paymentSuccessful', Object.assign(data, { payment_route }))
           return payment
         })
         .catch(({ error }) => {
-          console.log('error: ', error)
+          log.error('error: ', error)
           event.sender.send('paymentFailed', { error: error.toString() })
         })
       break
@@ -153,7 +154,7 @@ export default function (lnd, meta, event, msg, data) {
       walletController.sendCoins(lnd, meta, data)
         .then(({ txid }) => event.sender.send('transactionSuccessful', { amount: data.amount, addr: data.addr, txid }))
         .catch((error) => {
-          console.log('error: ', error)
+          log.error('error: ', error)
           event.sender.send('transactionError', { error: error.toString() })
         })
       break
@@ -162,22 +163,22 @@ export default function (lnd, meta, event, msg, data) {
     // { pubkey, localamt, pushamt } = data
       channelController.openChannel(lnd, meta, event, data)
         .then((channel) => {
-          console.log('CHANNEL: ', channel)
+          log.info('CHANNEL: ', channel)
           event.sender.send('channelSuccessful', { channel })
           return channel
         })
-        .catch(error => console.log('openChannel error: ', error))
+        .catch(error => log.error('openChannel error: ', error))
       break
     case 'closeChannel':
     // Response is empty. Streaming updates on channel status and updates
     // { channel_point, force } = data
       channelController.closeChannel(lnd, meta, event, data)
         .then((result) => {
-          console.log('CLOSE CHANNEL: ', result)
+          log.info('CLOSE CHANNEL: ', result)
           event.sender.send('closeChannelSuccessful')
           return result
         })
-        .catch(error => console.log('closeChannel error: ', error))
+        .catch(error => log.error('closeChannel error: ', error))
       break
     case 'connectPeer':
     // Returns a peer_id. Pass the pubkey, host and peer_id so we can add a new peer to the list
@@ -185,13 +186,13 @@ export default function (lnd, meta, event, msg, data) {
       peersController.connectPeer(lnd, meta, data)
         .then((peer) => {
           const { peer_id } = peer
-          console.log('peer_id: ', peer_id)
+          log.info('peer_id: ', peer_id)
           event.sender.send('connectSuccess', { pub_key: data.pubkey, address: data.host, peer_id })
           return peer
         })
         .catch((error) => {
           event.sender.send('connectFailure', { error: error.toString() })
-          console.log('connectPeer error: ', error)
+          log.error('connectPeer error: ', error)
         })
       break
     case 'disconnectPeer':
@@ -199,24 +200,24 @@ export default function (lnd, meta, event, msg, data) {
     // { pubkey } = data
       peersController.disconnectPeer(lnd, meta, data)
         .then(() => {
-          console.log('pubkey: ', data.pubkey)
+          log.info('pubkey: ', data.pubkey)
           event.sender.send('disconnectSuccess', { pubkey: data.pubkey })
           return null
         })
-        .catch(error => console.log('disconnectPeer error: ', error))
+        .catch(error => log.error('disconnectPeer error: ', error))
       break
     case 'connectAndOpen':
     // Connects to a peer if we aren't connected already and then attempt to open a channel
     // {} = data
       channelController.connectAndOpen(lnd, meta, event, data)
         .then((channelData) => {
-          console.log('connectAndOpen data: ', channelData)
+          log.info('connectAndOpen data: ', channelData)
           // event.sender.send('connectSuccess', { pub_key: data.pubkey, address: data.host, peer_id })
           return channelData
         })
         .catch((error) => {
           // event.sender.send('connectFailure', { error: error.toString() })
-          console.log('connectAndOpen error: ', error)
+          log.error('connectAndOpen error: ', error)
         })
       break
     default:
