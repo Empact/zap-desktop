@@ -7,8 +7,8 @@
   height: 76px;
   align-items: center;
   font-size: 14px;
-  transition: background-color .1s linear;
-  transition-delay: .1s;
+  transition: background-color 0.1s linear;
+  transition-delay: 0.1s;
   color: $white;
   position: relative;
 
@@ -62,7 +62,7 @@
 
   &:nth-child(2) {
     font-size: 10px;
-  } 
+  }
 
   .title {
     margin-bottom: 5px;
@@ -77,7 +77,7 @@
     font-weight: bold;
     letter-spacing: 1.2px;
   }
-  
+
   .icon {
     display: inline-block;
     flex: none;
@@ -103,7 +103,7 @@
   h3 {
     display: inline-block;
 
-    &:after {
+    &::after {
       content: " ";
       display: inline-block;
       width: 3px;
@@ -127,7 +127,7 @@
     &:nth-child(1) {
       margin-bottom: 5px;
     }
-    
+
     &:nth-child(2) {
       font-size: 10px;
       opacity: 0.5;

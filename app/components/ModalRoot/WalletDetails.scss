@@ -1,8 +1,5 @@
 @import '../../variables.scss';
 
-.walletdetails {
-}
-
 .inner {
   width: 75%;
   margin: 0 auto;
@@ -36,7 +33,7 @@
   }
 
   h1 {
-    font-family: 'Roboto';
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
     font-weight: 300;
     font-size: 24px;
   }
@@ -47,7 +44,7 @@
   }
 
   .copytext {
-    font-family: 'Roboto';
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
     text-align: center;
     font-size: 14px;
     font-weight: 200;
@@ -62,7 +59,7 @@
   section {
     h2 {
       text-transform: uppercase;
-      font-family: 'Roboto';
+      font-family: 'Roboto', Arial, Helvetica, sans-serif;
       font-weight: 300;
       font-size: 24px;
     }

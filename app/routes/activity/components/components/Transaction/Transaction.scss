@@ -10,8 +10,8 @@
   align-items: center;
   border-bottom: 1px solid $grey;
   font-size: 14px;
-  transition: background-color .1s linear;
-  transition-delay: .1s;
+  transition: background-color 0.1s linear;
+  transition-delay: 0.1s;
   color: $darkestgrey;
   position: relative;
 }
@@ -91,4 +91,3 @@
     }
   }
 }
-

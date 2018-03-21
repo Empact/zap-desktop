@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background: #2D303B;
+  background: #2d303b;
   padding: 10px 20px;
   color: $white;
 
@@ -67,7 +67,7 @@
 
     .filters {
       display: none;
-      
+
       &.active {
         display: block;
         position: absolute;
@@ -121,7 +121,7 @@
 
     span:nth-child(1) {
       font-size: 12px;
-    } 
+    }
 
     .online {
       color: $green;
@@ -152,7 +152,7 @@
   width: calc(100% - 40px);
   padding: 10px 20px;
   border-top: 1px solid $darkestgrey;
-  background: #2D303B;
+  background: #2d303b;
 
   .input {
     display: inline-block;
@@ -171,7 +171,7 @@
 
     svg {
       width: 14px;
-      height:14px;
+      height: 14px;
     }
   }
 
